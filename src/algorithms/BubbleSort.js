@@ -1,32 +1,31 @@
 /**
  * BubbleSort.js
  * Handles sorting by the bubble sort algorithm.
- * @version 2023.12.07
+ * @version 2025.08.13
  */
-const BubbleSort = async (inputArray, setArray, doneSorting) => {
+const BubbleSort = (inputArray) => {
     const n = inputArray.length;
-    const sortingSteps = [];
+    const steps = [];
     let swapped;
 
     do {
         swapped = false;
-
         for (let i = 0; i < n - 1; i++) {
-            sortingSteps.push({ type: 'compare', indices: [i, i + 1] });
+            steps.push({ type: 'compare', indices: [i, i + 1] });
 
             if (inputArray[i] > inputArray[i + 1]) {
-                // Swap
-                const temp = inputArray[i];
-                inputArray[i] = inputArray[i + 1];
-                inputArray[i + 1] = temp;
+                [inputArray[i], inputArray[i + 1]] = [inputArray[i + 1], inputArray[i]];
                 swapped = true;
-
-                sortingSteps.push({ type: 'swap', indices: [i, i + 1], newArray: inputArray.slice() });
+                steps.push({
+                    type: 'swap',
+                    indices: [i, i + 1],
+                    newArray: [...inputArray]
+                });
             }
         }
     } while (swapped);
 
-    doneSorting(sortingSteps);
+    return steps;
 };
 
 export default BubbleSort;

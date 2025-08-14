@@ -1,7 +1,7 @@
 /**
  * App.js
  * Handles display and user input.
- * @version 2023.12.07
+ * @version 2025.08.13
  */
 import React, { useState, useEffect } from 'react';
 import Visualizer from './Visualizer';
@@ -17,56 +17,51 @@ const App = () => {
     const [oldArray, setOldArray] = useState([]);
     const [algorithm, setAlgorithm] = useState(null);
     const [sorting, setSorting] = useState(false);
+    const [highlighted, setHighlighted] = useState([]);
 
     useEffect(() => {
         generateArray();
-    }, []); // Run only once on mount to initialize the array
+    }, []);
 
     const generateArray = () => {
-        const newArray = generateRandomArray(20, 10, 100); // Adjust array length and range as needed
+        const newArray = generateRandomArray(20, 10, 100);
         setArray(newArray);
-        setOldArray(newArray);
+        setOldArray([...newArray]); // store copy
+        setHighlighted([]);
     };
 
     const resetArray = () => {
-        setArray(oldArray);
+        setArray([...oldArray]);
+        setHighlighted([]);
     };
 
-    const startSorting = () => {
+    const startSorting = async () => {
+        if (!algorithm) return;
+
         setSorting(true);
+        let steps = [];
+
         if (algorithm === 'BubbleSort') {
-            BubbleSort(array.slice(), setArray, doneSorting);
+            steps = BubbleSort([...array]);
         } else if (algorithm === 'MergeSort') {
-            MergeSort(array.slice(), setArray, doneSorting);
+            steps = MergeSort([...array]);
         }
-        // Add more sorting algorithms as needed
-    };
 
-    const doneSorting = async (sortingSteps) => {
-        setSorting(false);
-
-        const updateSteps = async (index) => {
-            if (index < sortingSteps.length) {
-                const step = sortingSteps[index];
-
-                if (step.type === 'compare') {
-                    // Highlight the bars being compared
-                    const [bar1, bar2] = step.indices;
-                    const newArray = array.slice();
-                    newArray[bar1] = newArray[bar1] + 10; // Adjust the highlighting style
-                    newArray[bar2] = newArray[bar2] + 10; // Adjust the highlighting style
-                    setArray(newArray);
-                } else if (step.type === 'swap') {
-                    // Animate the swap
-                    setArray(step.newArray);
-                }
-
-                await new Promise((resolve) => setTimeout(resolve, 500)); // Adjust the delay as needed
-                updateSteps(index + 1);
+        // Animate each step
+        for (let step of steps) {
+            if (step.type === 'compare') {
+                setHighlighted(step.indices);
+            } else if (step.type === 'swap') {
+                setArray(step.newArray);
+                setHighlighted(step.indices);
             }
-        };
 
-        updateSteps(0);
+            await new Promise(res => setTimeout(res, 150)); // delay between steps
+        }
+
+        // Clear highlights after sorting
+        setHighlighted([]);
+        setSorting(false);
     };
 
     const handleAlgorithmChange = (selectedAlgorithm) => {
@@ -79,7 +74,6 @@ const App = () => {
                 <h2>{algorithm ? `Sorting Algorithm: ${algorithm}` : 'Select a Sorting Algorithm'}</h2>
                 <button disabled={sorting} onClick={() => handleAlgorithmChange('BubbleSort')}>Bubble Sort</button>
                 <button disabled={sorting} onClick={() => handleAlgorithmChange('MergeSort')}>Merge Sort</button>
-                {/* Add buttons for other sorting algorithms */}
             </div>
             <button onClick={startSorting} disabled={sorting}>
                 Run
@@ -90,7 +84,7 @@ const App = () => {
             <button onClick={generateArray} disabled={sorting}>
                 New Array
             </button>
-            <Visualizer array={array} />
+            <Visualizer array={array} highlighted={highlighted} />
         </div>
     );
 };
