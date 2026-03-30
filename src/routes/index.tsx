@@ -2,7 +2,7 @@
  * index.tsx
  * Home route — the sorting algorithm visualizer.
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { Button, Card, Slider } from '@heroui/react';
 import Visualizer from '../components/Visualizer';
@@ -23,6 +23,7 @@ function HomePage() {
     const [highlighted, setHighlighted] = useState<number[]>([]);
     const [arraySize, setArraySize] = useState(20);
     const [speed, setSpeed] = useState(150);
+    const stopRef = useRef(false);
 
     const generateArray = useCallback(() => {
         const newArray = generateRandomArray(arraySize, 10, 100);
@@ -44,12 +45,17 @@ function HomePage() {
         if (!algorithm) { return; }
 
         setSorting(true);
+        stopRef.current = false;
 
         const steps = algorithm === 'BubbleSort'
             ? BubbleSort([...array])
             : MergeSort([...array]);
 
         for (const step of steps) {
+            if (stopRef.current) {
+                break;
+            }
+
             if (step.type === 'compare') {
                 setHighlighted(step.indices);
             } else if (step.type === 'swap' && step.newArray) {
@@ -80,6 +86,7 @@ function HomePage() {
                     <div className="flex gap-2">
                         <Button
                             variant={algorithm === 'BubbleSort' ? 'primary' : 'outline'}
+                            className="text-white"
                             isDisabled={sorting}
                             onPress={() => setAlgorithm('BubbleSort')}
                         >
@@ -87,6 +94,7 @@ function HomePage() {
                         </Button>
                         <Button
                             variant={algorithm === 'MergeSort' ? 'primary' : 'outline'}
+                            className="text-white"
                             isDisabled={sorting}
                             onPress={() => setAlgorithm('MergeSort')}
                         >
@@ -152,7 +160,15 @@ function HomePage() {
                             ▶ Run
                         </Button>
                         <Button
+                            variant="danger"
+                            isDisabled={!sorting}
+                            onPress={() => { stopRef.current = true; }}
+                        >
+                            ■ Stop
+                        </Button>
+                        <Button
                             variant="secondary"
+                            className="text-black"
                             isDisabled={sorting}
                             onPress={resetArray}
                         >
@@ -160,6 +176,7 @@ function HomePage() {
                         </Button>
                         <Button
                             variant="outline"
+                            className="text-white"
                             isDisabled={sorting}
                             onPress={generateArray}
                         >
