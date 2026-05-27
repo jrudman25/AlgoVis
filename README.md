@@ -2,6 +2,12 @@
 
 A sorting algorithm visualizer built with React, TypeScript, and HeroUI.
 
+## Features
+
+- **Sorting visualization** - animated bars show comparisons and placements
+- **Intuitive speed control** - higher speed levels run faster
+- **Sorting audio** - optional Web Audio tones map active values to pitch
+
 ## Tech Stack
 
 - **React** + **TypeScript** — UI and type safety
@@ -13,8 +19,11 @@ A sorting algorithm visualizer built with React, TypeScript, and HeroUI.
 
 ## Algorithms
 
-- **Bubble Sort** — compares adjacent elements and swaps them if out of order
-- **Merge Sort** — recursively divides the array and merges sorted halves
+- **Bubble Sort** - compares adjacent elements and swaps them if out of order
+- **Insertion Sort** - builds a sorted section one item at a time
+- **Merge Sort** - recursively divides the array and merges sorted halves
+- **Quick Sort** - partitions around pivots and sorts each side
+- **Selection Sort** - repeatedly selects the smallest remaining element
 
 ## Scripts
 
