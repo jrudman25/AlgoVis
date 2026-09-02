@@ -2,6 +2,8 @@
 
 A sorting algorithm visualizer built with React, TypeScript, and HeroUI.
 
+<img width="700" alt="AlgoVis home page" src="https://github.com/user-attachments/assets/17a27133-06ac-475a-81a4-c4b993fa3d64" />
+
 ## Features
 
 - **Sorting visualization** - animated bars show comparisons and placements
